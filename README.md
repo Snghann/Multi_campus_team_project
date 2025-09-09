@@ -28,107 +28,6 @@
 
 # 3. 구현 과정
 프로젝트는 데이터 수집 -> 전처리 -> 감정분석 및 리뷰 요약 -> RAG 구현 -> 웹 페이지 구현 으로 진행되었습니다.
-'''
-# 현재 페이지
-page_num = 1
-page_ctl = 3
-
-write_dt_lst = []
-item_nm_lst = []
-content_lst = []
-
-# 날짜
-date_cut = (datetime.now() - timedelta(days=365)).strftime('%Y%m%d')
-
-while True:
-    if page_num == 26:
-        print("500개 수집 완료")
-        break
-
-    print(f'start : {page_num} page 수집 중, page_ctl:{page_ctl}')
-
-    # 1. 셀레니움으로 html 가져오기
-    html_source = driver.page_source
-
-    # 2. bs4로 html 파싱
-    soup = BeautifulSoup(html_source, 'html.parser')
-    time.sleep(0.5)
-
-    # 3. 리뷰 정보 가져오기
-    reviews = soup.findAll('li', {'class': 'BnwL_cs1av'})
-
-    # 4. 한 페이지 내에서 수집 가능한 리뷰 리스트에 저장
-    for review in range(len(reviews)):
-        try:
-            # 4-1. 리뷰 작성일자 수집
-            write_dt_raw = reviews[review].findAll('span', {'class': '_2L3vDiadT9'})[0].get_text()
-            write_dt = datetime.strptime(write_dt_raw, '%y.%m.%d.').strftime('%Y%m%d')
-        except Exception:
-            write_dt = ''
-
-        # 4-2. 상품명 수집
-        try:
-            item_nm_divs = reviews[review].findAll('div', {'class': '_2FXNMst_ak'})
-            if item_nm_divs:
-                item_nm_info_raw = item_nm_divs[0].get_text()
-
-                # dl 태그 안의 텍스트 추출 (없을 수도 있음)
-                dl_tag = item_nm_divs[0].find('dl', {'class': 'XbGQRlzveO'})
-                item_nm_info_for_del = dl_tag.get_text() if dl_tag else ''
-
-                # 텍스트 정제
-                item_nm_info = re.sub(item_nm_info_for_del, '', item_nm_info_raw)
-
-                # '제품 선택: ' 위치 찾기
-                str_start_idx = item_nm_info.find('제품 선택: ')
-                if str_start_idx != -1:
-                    item_nm = item_nm_info[str_start_idx + len('제품 선택: '):].strip()
-                else:
-                    item_nm = item_nm_info.strip()
-            else:
-                item_nm = ''
-        except Exception:
-            item_nm = ''
-
-        # 4-3. 리뷰내용 수집
-        try:
-            review_div = reviews[review].findAll('div', {'class': '_1kMfD5ErZ6'})
-            if review_div:
-                span_tag = review_div[0].find('span', {'class': '_2L3vDiadT9'})
-                if span_tag:
-                    review_content_raw = span_tag.get_text()
-                    review_content = re.sub(' +', ' ', re.sub('\n', ' ', review_content_raw))
-                else:
-                    review_content = ''
-            else:
-                review_content = ''
-        except Exception:
-            review_content = ''
-
-        # 4-4. 수집데이터 저장
-        write_dt_lst.append(write_dt)
-        item_nm_lst.append(item_nm)
-        content_lst.append(review_content)
-
-    # 5. 리뷰 수집일자 기준 데이터 확인 (최근 1년치만 수집)
-    if write_dt_lst and write_dt_lst[-1] < date_cut:
-        break
-
-    # 6. 페이지 이동
-    try:
-        driver.find_element(By.CSS_SELECTOR, f'#REVIEW > div > div._2LvIMaBiIO > div._2g7PKvqCKe > div > div > a:nth-child({page_ctl})').click()
-        time.sleep(5)
-    except Exception as e:
-        print(f"페이지 이동 실패: {e}")
-        break
-
-    page_num += 1
-    page_ctl += 1
-    if page_num % 10 == 1:
-        page_ctl = 3
-
-print('done')
-'''
 
 ### 3-1. 데이터 수집
 
@@ -138,8 +37,21 @@ print('done')
 
 ### 3-4. RAG 구현
 
-### 3-5. 웹 페이지 구
+### 3-5. 웹 페이지 구현
 
 # 4. 향후 개선 사항
 
+1. 출력 속도 향상
+   현재 출력 속도는 평균 2초 정도로 확연히 느린 속도는 아니지만 데이터가 더 많아졌을 경우를 대비해서 벡터 데이터베이스를 활용해 출력 속도를 높이는 최근접 탐색 라이브러리를 도입할 계획입니다. 해당 기술을 적용하면 사용자가 더욱 빨리 출력을 받아볼 수 있을 것이라 기대됩니다.
+
+2. 개인화 추천 고도화
+   현재는 사용자의 질문에 가장 유사한 제품을 추천하고 있지만 더 나아가 GMM 기반 소프트 클러스터링 기법을 적용하여 여러 관심사 그룹에 동시에 속할 수 있도록 모델링할 계획입니다. 해당 기술을 적용하면 사용자의 복합적인 니즈를 파악해 더 정교한 맞춤형 제품을 추천할 수 있을 것입니다.
+
+3. 카테고리 및 제품 추가
+   현재의 모델은 MVP모델로 카테고리와 제품의 수가 비교적 적습니다. 차후 더 많은 카테고리와 그에 맞는 제품의 데이터를 수집하여 더 많은 선택지를 주고자 합니다.
+
 # 5. 후기
+이번 프로젝트를 통해  단순한 모델 학습만이 아니라 프로젝트 기획부터 웹 페이지 구현까지 엔드 투 엔드 파이프라인을 설계하고 구현할 수 있었습니다.
+이러한 과정에서 모델 개발뿐만아니라 데이터 처리 방식, 모델 선택, 검색 구조가 모두 연결되어야 의미 있는 결과가 나온다는 것을 배웠습니다. 이를 통해 단순히 AI 모델 개발이 아니라 하나의 시스템을 완성하는 시각을 가지게 되었습니다. 
+또한 프로젝트를 관리하는 팀장으로써 가장 어려웠던 점은 팀원들의 작업 속도와 생각이 다르다는 것이였습니다.
+처음에는 역할을 나누고 태스크를 나눠서 기간을 정하는 것만으로도 충분할거라고 생각했습니다. 하지만 프로젝트를 진행하는 도중 각 태스크가 유기적으로 연결되지 않아 여러 차례 충돌이 있었습니다. 이를 해결하기 위해 마무리 하기 전 간단한 각자 한 일에 대해 공유하고 주 단위 체크리스트를 작성하여 일정을 관리했습니다. 또한 의견 충돌로 문제가 생기면 즉시 협의할 수 있도록 하였습니다. 그 결과 팀장은 지시하는 사람이 아니라 문제 해결을 돕는 조율자라는 점을 배울 수 있었습니다.
