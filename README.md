@@ -13,6 +13,7 @@
 # 2. 시연 결과
 
 ### 메인 페이지(카테고리 선택)
+<img width="886" height="862" alt="Image" src="https://github.com/user-attachments/assets/934751de-9af8-433f-9ada-3176aeb6ab30" />
 
 ### 키워드 선택
 
