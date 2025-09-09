@@ -13,13 +13,18 @@
 # 2. 시연 결과
 
 ### 메인 페이지(카테고리 선택)
-<img width="886" height="862" alt="Image" src="https://github.com/user-attachments/assets/934751de-9af8-433f-9ada-3176aeb6ab30" />
+<img width="725" height="862" alt="스크린샷 2025-09-09 131555" src="https://github.com/user-attachments/assets/42530557-3589-45ea-961a-fd6e28e4f719" />
 
 ### 키워드 선택
+<img width="706" height="522" alt="스크린샷 2025-09-09 131615" src="https://github.com/user-attachments/assets/fb6cf309-a71b-4d12-9f43-5575b86d5293" />
 
 ### 사용자 Input
+<img width="711" height="640" alt="스크린샷 2025-09-09 131630" src="https://github.com/user-attachments/assets/1396213f-0a99-4804-ae76-c2b4399e48b2" />
 
 ### 추천 결과
+<img width="722" height="438" alt="스크린샷 2025-09-09 131840" src="https://github.com/user-attachments/assets/95314289-82d6-4a71-8e11-dc25c6b67a44" />
+<img width="736" height="449" alt="스크린샷 2025-09-09 131853" src="https://github.com/user-attachments/assets/f09e51dd-82ff-4f7f-9e50-9ac13b6354c3" />
+<img width="726" height="436" alt="스크린샷 2025-09-09 131903" src="https://github.com/user-attachments/assets/f5f6dddc-ae48-4f0d-8289-87e76ed40b51" />
 
 # 3. 구현 과정
 
